@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -76,12 +77,40 @@ public class JobData {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
 
         return jobs;
+    }
+
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+        loadData();
+
+        //Create ArrayList of HashMap of jobs to return
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        //For each row in allJobs
+        for (HashMap<String, String> row : allJobs) {
+            //Create Map of keys and values in HashMap and iterate through entrySet
+            //In other words makes the kv pairs in a row from allJobs iterable
+            for (Map.Entry<String, String> category : row.entrySet()) {
+                //if the value of the current kv pair contains the user's search value...
+                //(toLowerCase() makes search case-insensitive)
+                if (category.getValue().toLowerCase().contains(value.toLowerCase())) {
+                    //...and the row is not already in jobs...
+                    //(keeps method from returning duplicate rows that had substring in different values)
+                    if (!jobs.contains(row)) {
+                        //...add it to jobs
+                        jobs.add(row);
+                    }
+                }
+            }
+        }
+
+        return jobs;
+
     }
 
     /**
